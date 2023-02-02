@@ -11,6 +11,7 @@ const getData = async (id: number) => {
   }
 };
 
+// MAX: 641820, Min: 1
 const getDataRange = (start: number = 1, end: number = 10) => {
   const data: any[] = [];
   for (let i = start; i <= end; i++) {

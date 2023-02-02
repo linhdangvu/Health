@@ -1,31 +1,24 @@
 <script setup lang="ts">
+  import axios from "axios";
   import ApexChart from "vue3-apexcharts";
+  import { useFile } from "../stores/useFile";
 
-  const chartOptions = {
-    chart: {
-      id: "vuechart-example",
-    },
-    xaxis: {
-      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-    },
-  };
-  const series = [
-    {
-      name: "series-1",
-      data: [30, 40, 35, 50, 49, 60, 70, 91],
-    },
-  ];
+  const file = useFile();
+  const data = await file.getFileData(
+    "/Volumes/Bi DANG/CFAINSTA/Codespace/IA/health/src/data/produits-tous"
+  );
+  console.log(data);
 </script>
 
 <template>
   <h3>Notification du score de santé d’un fabricant sur le marché</h3>
 
   <div class="container py-4 px-3 mx-auto">
-    <ApexChart
+    <!-- <ApexChart
       width="500"
       type="bar"
       :options="chartOptions"
       :series="series"
-    ></ApexChart>
+    ></ApexChart> -->
   </div>
 </template>
