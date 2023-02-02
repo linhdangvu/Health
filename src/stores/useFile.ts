@@ -28,7 +28,7 @@ export const useFile = () => {
           prodID: checkLine[1],
           catID: checkLine[2],
           fabID: checkLine[3],
-          magID: checkLine[3],
+          magID: checkLine[4],
         });
       }
     });

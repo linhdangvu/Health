@@ -1,6 +1,4 @@
-<script setup lang="ts">
-  import Health from "./components/Health.vue";
-</script>
+<!-- <script setup lang="ts"></script> -->
 
 <template>
   <Health />
