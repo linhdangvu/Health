@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
   import Health from "./components/Health.vue";
 </script>
 
