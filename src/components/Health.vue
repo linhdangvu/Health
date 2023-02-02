@@ -17,6 +17,8 @@
   const isLoading = ref(true);
   const isLoadingMoyen = ref(true);
   const moyenneProduit = ref(0);
+  const moyenneProdTop1 = ref(0);
+  const moyenneProdTop2 = ref(0);
   let topMagasinByFab: any[] = [];
   let topMagasinByProd: any[] = [];
 
@@ -141,10 +143,58 @@
           Number(Object.values(b).pop()) - Number(Object.values(a).pop())
       );
       // console.log(toNumberMagasin);
+
       console.log(fabSorted);
       console.log(prodSorted);
       topMagasinByFab = fabSorted.slice(0, 10);
       topMagasinByProd = prodSorted.slice(0, 10);
+      console.log(topMagasin);
+      // Question 1.4
+      // Pose fabID = 506, catID = 5, magasin top 10
+      const fabIDO = 965;
+      const filteredProductByFabTop: any[] = [];
+      const filteredProductByProdTop: any[] = [];
+      const list10MagFab = topMagasinByFab.map((ele: any) => {
+        return Object.keys(ele).pop();
+      });
+      const list10MagProd = topMagasinByProd.map((ele: any) => {
+        return Object.keys(ele).pop();
+      });
+
+      data.forEach((item: any) => {
+        if (
+          Number(item.catID) === category &&
+          Number(item.fabID) === fabIDO &&
+          list10MagFab.includes(item.magID) &&
+          !filteredProductByFabTop.includes(item.prodID)
+        ) {
+          filteredProductByFabTop.push(item.prodID);
+          console.log("FAB", item);
+        }
+
+        if (
+          Number(item.catID) === category &&
+          Number(item.fabID) === fabIDO &&
+          list10MagProd.includes(item.magID) &&
+          !filteredProductByProdTop.includes(item.prodID)
+        ) {
+          filteredProductByProdTop.push(item.prodID);
+          console.log("PROD", item);
+        }
+        // if (Number(item.catID) === category && Number(item.magID) === 22) {
+        //   console.log(item.fabID);
+        // }
+      });
+      // let top10MagFab: any[] = [];
+      // topMagasinByFab.forEach((item: any) => {
+      //   const key: any = Object.keys(item).pop()?.toString();
+      //   top10MagFab.push(topMagasin[key]);
+      // });
+
+      console.log(filteredProductByFabTop, filteredProductByProdTop);
+      moyenneProdTop1.value = (filteredProductByFabTop.length / 10) * 100;
+      moyenneProdTop2.value = (filteredProductByProdTop.length / 10) * 100;
+
       console.log("End loading...");
       isLoading.value = false;
     } catch (e) {
@@ -175,6 +225,7 @@
     },
     series: [
       {
+        name: "Fabricants",
         data: toApexChart(topMagasinByFab),
       },
     ],
@@ -190,9 +241,28 @@
     },
     series: [
       {
+        name: "Produits",
         data: toApexChart(topMagasinByProd),
       },
     ],
+  };
+
+  const optionsMoyProd1 = {
+    chart: {
+      height: 350,
+      type: "radialBar",
+    },
+    series: [moyenneProdTop1.value],
+    labels: ["Moyenne"],
+  };
+
+  const optionsMoyProd2 = {
+    chart: {
+      height: 350,
+      type: "radialBar",
+    },
+    series: [moyenneProdTop2.value],
+    labels: ["Moyenne"],
   };
 
   watchEffect(() => {
@@ -202,14 +272,12 @@
 </script>
 
 <template>
-  <h3>Notification du score de santé d’un fabricant sur le marché</h3>
-
-  <p>Category 5</p>
-
   <div v-if="isLoading">Loading page...</div>
   <div v-else>
     <div class="buttons">
+      <h4>Choisir les données:</h4>
       <button
+        class="btn-lightblue"
         :class="dataToShow.includes('pointsDeVente-tous') ? 'is-active' : ''"
         @click="
           changeDataShow(
@@ -221,6 +289,7 @@
       </button>
 
       <button
+        class="btn-lightblue"
         :class="dataToShow.includes('produits-tous') ? 'is-active' : ''"
         @click="
           changeDataShow(
@@ -260,7 +329,7 @@
       </div>
     </div>
 
-    <h3>Top 10</h3>
+    <h3>Top 10 magasins ont la plupart fabricants</h3>
 
     <div class="box-container">
       <ApexChart
@@ -271,10 +340,28 @@
       ></ApexChart>
 
       <ApexChart
+        :type="optionsMoyProd1.chart.type"
+        :height="optionsMoyProd1.chart.height"
+        :options="optionsMoyProd1"
+        :series="optionsMoyProd1.series"
+      ></ApexChart>
+    </div>
+
+    <h3>Top 10 magasins ont la plupart produits</h3>
+
+    <div class="box-container">
+      <ApexChart
         type="bar"
         width="500"
         :options="optionsProd"
         :series="optionsProd.series"
+      ></ApexChart>
+
+      <ApexChart
+        :type="optionsMoyProd2.chart.type"
+        :height="optionsMoyProd2.chart.height"
+        :options="optionsMoyProd2"
+        :series="optionsMoyProd2.series"
       ></ApexChart>
     </div>
   </div>
@@ -286,13 +373,17 @@
     flex-wrap: wrap;
     justify-content: center;
 
-    button {
+    .btn-lightblue {
       margin: 10px;
+      color: black;
+      background-color: rgb(213, 234, 246);
+      border: solid 1px black;
     }
 
     .is-active {
-      border: solid 2px lightblue;
-      background-color: rgb(88, 191, 255);
+      // border: solid 2px lightblue;
+      background-color: rgb(0, 157, 255);
+      color: white;
     }
   }
 
