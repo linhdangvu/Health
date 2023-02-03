@@ -92,7 +92,7 @@
 </script>
 
 <template>
-  <h3>Notification du score de santé d’un fabricant sur le marché</h3>
+  <h2>Notification du score de santé d’un fabricant sur le marché</h2>
   <div class="loading" v-if="isLoading">Loading...</div>
   <div v-else>
     <div class="box-select-container">
@@ -156,6 +156,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     width: 80vw;
+    margin: 0 auto;
     .box-select {
       .title {
         font-size: 1rem;

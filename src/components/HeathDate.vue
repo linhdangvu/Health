@@ -13,15 +13,23 @@
   } from "vue";
   import ApexChart from "vue3-apexcharts";
   import { useFile } from "../stores/useFile";
-import { toApexChart, toApexChart2 } from "../utils/apexchart";
+  import { toApexChart, toApexChart2 } from "../utils/apexchart";
   import sleep from "../utils/sleep";
+
+  /* INITIAL CONSTANT */
+  // SOLDES 2022: 12/1/2022 au 8/2/2022 => 20220112 -> 20220208
+  // ETE 2022: 21/6/2022 au 23/9/2022 => 20220621 - 20220923
+  const START_SOLDES_HIVER: number = 20220112;
+  const END_SOLDES_HIVER: number = 20220208;
+  const START_ETE: number = 20220621;
+  const END_ETE: number = 20220923;
 
   /* PROPS */
   const props = defineProps<{
     catID: number;
     data: any[];
     mag: boolean;
-    annee: string
+    annee: string;
   }>();
 
   /* INITIAL VARIABLE */
@@ -36,11 +44,9 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
   let topMagasinByFab: any[] = [];
   let topMagasinByProd: any[] = [];
   const oldCategory = ref(props.catID);
-  const oldAnnee = ref(props.annee)
-
-  //   12/1/2022 au  8/2/2022 => 20220112 -> 20220208
-  const startSoldesHiver = 20220112;
-  const endSoldesHiver = 20220208;
+  const oldAnnee = ref(props.annee);
+  const optionTabs = ["Statistiques", "Top 10 magasins"];
+  const currentTab = ref("Statistiques");
 
   const handleData = (category: number, annee: string) => {
     const nbFabJan: any[] = [];
@@ -81,8 +87,8 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
 
         // Question 2.2:
         if (
-          Number(item.dateID) >= 20220112 &&
-          Number(item.dateID) <= 20220208
+          Number(item.dateID) >= START_SOLDES_HIVER &&
+          Number(item.dateID) <= END_SOLDES_HIVER
         ) {
           if (!fabData.includes(item.fabID)) {
             // Questin 1.1
@@ -96,11 +102,11 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
         }
 
         // • Question 2.3.
-        // ETE 2022: 21/6/2022 - 23/9/2022 => 20220621 - 20220923
         if (
-          item.magID && props.mag &&
-          Number(item.dateID) >= 20220621 &&
-          Number(item.dateID) <= 20220923
+          item.magID &&
+          props.mag &&
+          Number(item.dateID) >= START_ETE &&
+          Number(item.dateID) <= END_ETE
         ) {
           // TOP 10 magasin: most pid, most fid
           if (!magData.includes(item.magID)) {
@@ -134,39 +140,39 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
     moyenneProduit.value =
       Math.round((prodByFab.length / fabData.length) * 100) / 100;
 
-      if (props.mag) {
-         //Q2.3
-    // Sorted top magasion
-    const toFabMagasin = Object.keys(topMagasin).map((item: any) => {
-      const lenF = topMagasin[item].fab.length;
-      const obj: any = {};
-      obj[item] = lenF;
-      return obj;
-    });
+    if (props.mag) {
+      //Q2.3
+      // Sorted top magasion
+      const toFabMagasin = Object.keys(topMagasin).map((item: any) => {
+        const lenF = topMagasin[item].fab.length;
+        const obj: any = {};
+        obj[item] = lenF;
+        return obj;
+      });
 
-    const toProdMagasin = Object.keys(topMagasin).map((item: any) => {
-      const lenP = topMagasin[item].prod.length;
-      const obj: any = {};
-      obj[item] = lenP;
-      return obj;
-    });
+      const toProdMagasin = Object.keys(topMagasin).map((item: any) => {
+        const lenP = topMagasin[item].prod.length;
+        const obj: any = {};
+        obj[item] = lenP;
+        return obj;
+      });
 
-    const fabSorted = toFabMagasin.sort(
-      (a: any, b: any) =>
-        Number(Object.values(b).pop()) - Number(Object.values(a).pop())
-    );
+      const fabSorted = toFabMagasin.sort(
+        (a: any, b: any) =>
+          Number(Object.values(b).pop()) - Number(Object.values(a).pop())
+      );
 
-    // await sleep(100);
-    const prodSorted = toProdMagasin.sort(
-      (a: any, b: any) =>
-        Number(Object.values(b).pop()) - Number(Object.values(a).pop())
-    );
-    // console.log(toNumberMagasin);
-    topMagasinByFab = fabSorted.slice(0, 10);
-    topMagasinByProd = prodSorted.slice(0, 10);
+      // await sleep(100);
+      const prodSorted = toProdMagasin.sort(
+        (a: any, b: any) =>
+          Number(Object.values(b).pop()) - Number(Object.values(a).pop())
+      );
+      // console.log(toNumberMagasin);
+      topMagasinByFab = fabSorted.slice(0, 10);
+      topMagasinByProd = prodSorted.slice(0, 10);
 
-    // END Q2.3
-      }
+      // END Q2.3
+    }
   };
 
   onMounted(() => {
@@ -180,8 +186,6 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
       console.log(e);
     }
   });
-
-
 
   const optionsQ21 = computed(() => {
     if (!isLoading.value) {
@@ -247,37 +251,35 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
   });
 
   onUnmounted(() => {
-    console.log("Unmmounted")
-  })
+    console.log("Unmmounted");
+  });
 
   onUpdated(async () => {
-    console.log('onUpdated')
+    console.log("onUpdated");
     if (Number(oldAnnee.value) !== Number(props.annee)) {
       oldAnnee.value = props.annee;
       isLoading.value = true;
       await sleep(1);
-      handleData(Number(props.catID),props.annee);
+      handleData(Number(props.catID), props.annee);
       await sleep(1);
       isLoading.value = false;
     }
-    
-  })
-  
+  });
+
   watchEffect(async () => {
-    console.log('Watch', Number(oldCategory.value) !== Number(props.catID) )
-    console.log(optionsFab.value)
+    console.log("Watch", Number(oldCategory.value) !== Number(props.catID));
+    console.log(optionsFab.value);
     if (Number(oldCategory.value) !== Number(props.catID)) {
       console.log("Restart by category Date");
-      console.log("watch",oldCategory.value, Number(props.catID) )
+      console.log("watch", oldCategory.value, Number(props.catID));
       oldCategory.value = Number(props.catID);
       isLoading.value = true;
       await sleep(1);
-      handleData(Number(props.catID),props.annee);
+      handleData(Number(props.catID), props.annee);
       await sleep(1);
       isLoading.value = false;
       console.log("End restart by category Date");
     } else {
-      
       console.log("Not in the same value");
     }
   });
@@ -286,86 +288,152 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
 <template>
   <div class="loading" v-if="isLoading">Loading ...</div>
   <div v-else>
-    <p style="text-align: left" v-if="Number(props.annee) === 2022">
+    <!-- <p style="text-align: left" v-if="Number(props.annee) === 2022">
       <span style="margin-left: 20px">Note: </span> <br />
       <ul> 
       <li>Soldes d'Hiver 2022: de 12/1/2022 au 8/2/2022</li>
       <li>L'Été: de 21/6/2022 au 23/9/2022</li>
       </ul>
-    </p>
+    </p> -->
+    <div v-if="props.mag">
+      <div class="tabs">
+        <div
+          :class="[currentTab === item && 'is-active']"
+          @click="currentTab = item"
+          class="tab"
+          v-for="item in optionTabs"
+          :key="item"
+        >
+          {{ item }}
+        </div>
+      </div>
 
-    <h3>Fabricants dans Janver, Février, Mars en {{ props.annee }}</h3>
+      <div v-if="currentTab === optionTabs[0]">
+        <div class="box-container">
+          <div class="moyenne-box" v-if="Number(props.annee) === 2022">
+            <div>
+              <h3>Moyenne dans les soldes d'hiver {{ props.annee }}</h3>
+              <div v-if="isLoading">Loading...</div>
+              <div v-else class="box-container">
+                <div class="small-box">
+                  <h1>Moyenne de produits par fabricants</h1>
+                  <p>{{ moyenneProduit }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="moyenne-box" v-else>
+            <div class="moyenne-content">À venir ...</div>
+          </div>
 
-    <div class="box-container">
-      <ApexChart
-        v-if="optionsQ21"
-        type="bar"
-        width="500"
-        :options="optionsQ21"
-        :series="optionsQ21.series"
-      ></ApexChart>
+          <div>
+            <h3>Fabricants dans Janver, Février, Mars en {{ props.annee }}</h3>
+            <ApexChart
+              v-if="optionsQ21"
+              type="bar"
+              width="500"
+              :options="optionsQ21"
+              :series="optionsQ21.series"
+            ></ApexChart>
+          </div>
+        </div>
+      </div>
 
-      <!--  <ApexChart
-        :type="optionsMoyProd2.chart.type"
-        :height="optionsMoyProd2.chart.height"
-        :options="optionsMoyProd2"
-        :series="optionsMoyProd2.series"
-      ></ApexChart> -->
-    </div>
-<div  v-if="Number(props.annee) === 2022">
-  <h3>Moyenne dans les soldes d'hiver 2022</h3>
-    <div v-if="isLoading">Loading...</div>
-    <div v-else class="box-container">
-      <div class="small-box">
-        <h1>Moyenne de produits par fabricants</h1>
-        <p>{{ moyenneProduit }}</p>
+      <div v-else>
+        <div v-if="Number(props.annee) === 2022">
+          <h3>
+            Top 10 magasins dans l'été et les soldes d'hiver en
+            {{ props.annee }}
+          </h3>
+
+          <div class="box-container">
+            <ApexChart
+              v-if="optionsFab"
+              width="500"
+              type="bar"
+              :options="optionsFab"
+              :series="optionsFab.series"
+            ></ApexChart>
+
+            <ApexChart
+              v-if="optionsProd"
+              type="bar"
+              width="500"
+              :options="optionsProd"
+              :series="optionsProd.series"
+            ></ApexChart>
+          </div>
+        </div>
+
+        <div v-else>
+          <div class="venir">À venir</div>
+        </div>
       </div>
     </div>
 
-    <h3>Top 10 magasins dans l'été et les soldes d'hiver en 2022</h3>
-    <!-- <h3>Top 10 magasins ont la plupart fabricants</h3> -->
+    <div v-else>
+      <div class="box-container">
+        <div class="moyenne-box" v-if="Number(props.annee) === 2022">
+          <div>
+            <h3>Moyenne dans les soldes d'hiver {{ props.annee }}</h3>
+            <div v-if="isLoading">Loading...</div>
+            <div v-else class="box-container">
+              <div class="small-box">
+                <h1>Moyenne de produits par fabricants</h1>
+                <p>{{ moyenneProduit }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="moyenne-box" v-else>
+          <div class="moyenne-content">À venir ...</div>
+        </div>
 
-    <div class="box-container">
-      <ApexChart
-        v-if="optionsFab"
-        width="500"
-        type="bar"
-        :options="optionsFab"
-        :series="optionsFab.series"
-      ></ApexChart>
-
-      <!-- <ApexChart
-    :type="optionsMoyProd1.chart.type"
-    :height="optionsMoyProd1.chart.height"
-    :options="optionsMoyProd1"
-    :series="optionsMoyProd1.series"
-  ></ApexChart> -->
+        <div>
+          <h3>Fabricants dans Janver, Février, Mars en {{ props.annee }}</h3>
+          <ApexChart
+            v-if="optionsQ21"
+            type="bar"
+            width="500"
+            :options="optionsQ21"
+            :series="optionsQ21.series"
+          ></ApexChart>
+        </div>
+      </div>
     </div>
-
-    <!-- <h3>Top 10 magasins ont la plupart produits</h3> -->
-
-    <div class="box-container">
-      <ApexChart
-        v-if="optionsProd"
-        type="bar"
-        width="500"
-        :options="optionsProd"
-        :series="optionsProd.series"
-      ></ApexChart>
-
-      <!-- <ApexChart
-    :type="optionsMoyProd2.chart.type"
-    :height="optionsMoyProd2.chart.height"
-    :options="optionsMoyProd2"
-    :series="optionsMoyProd2.series"
-  ></ApexChart> -->
-    </div>
-</div>
-  
   </div>
 </template>
 
 <style lang="scss" scoped>
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    .tab {
+      background-color: #282626;
+      color: white;
+      padding: 10px 15px;
+      border: solid 1px black;
+      cursor: pointer;
+    }
+
+    .tab:hover,
+    .is-active {
+      background-color: rgba(0, 143, 251, 0.85);
+      // color: black;
+    }
+
+    .tab:first-child {
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+    }
+
+    .tab:nth-child(2) {
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+  }
   .buttons {
     display: flex;
     flex-wrap: wrap;
@@ -389,6 +457,15 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 10px;
+
+    .moyenne-box {
+      width: 400px;
+
+      .moyenne-content {
+        line-height: 20rem;
+      }
+    }
 
     .small-box {
       border: solid 2px black;
@@ -409,6 +486,12 @@ import { toApexChart, toApexChart2 } from "../utils/apexchart";
   }
 
   .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+
+  .venir {
     position: absolute;
     top: 50%;
     left: 50%;

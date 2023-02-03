@@ -22,8 +22,6 @@
     mag: boolean;
   }>();
 
-  console.log(props.mag);
-
   /* INITIAL VARIABLE */
   const nombreFab = ref(0);
   const nombreProd = ref(0);
@@ -60,34 +58,9 @@
     "Decembre 2022",
     "Janvier 2023",
   ];
+  const optionTabs = ["Statistiques", "Top 10 magasins", "Moyenne de produit"];
+  const currentTab = ref("Statistiques");
 
-  const fabricantSorted = (data: any) => {
-    if (!data) return [];
-    const sortedData: any = data.sort((obj1: any, obj2: any) => {
-      if (Number(obj1.fab) > Number(obj2.fab)) {
-        return 1;
-      }
-      if (Number(obj1.fab) < Number(obj2.fab)) {
-        return -1;
-      }
-      return 0;
-    });
-    return sortedData;
-  };
-
-  const productSorted = (data: any) => {
-    if (!data) return [];
-    const sortedData: any = data.sort((obj1: any, obj2: any) => {
-      if (Number(obj1.prod) > Number(obj2.prod)) {
-        return 1;
-      }
-      if (Number(obj1.prod) < Number(obj2.prod)) {
-        return -1;
-      }
-      return 0;
-    });
-    return sortedData;
-  };
   const handleData = (category: number) => {
     topMagasin = {};
     props.data.forEach((item: any) => {
@@ -389,90 +362,146 @@
 <template>
   <div class="loading" v-if="isLoading">Loading ...</div>
   <div v-else>
-    <h3>Nombre total</h3>
-    <div v-if="isLoading">Loading container...</div>
-    <div v-else class="box-container">
-      <div class="small-box">
-        <h1>Nombre de fabricants</h1>
-        <p>{{ nombreFab }}</p>
-      </div>
-
-      <div class="small-box">
-        <h1>Nombre de produits</h1>
-        <p>{{ nombreProd }}</p>
-      </div>
-
-      <div v-if="nombreMag !== 0" class="small-box">
-        <h1>Nombre de magasins</h1>
-        <p>{{ nombreMag }}</p>
-      </div>
-    </div>
-
-    <h3>Moyenne</h3>
-    <div v-if="isLoading">Loading container...</div>
-    <div v-else class="box-container">
-      <div class="small-box">
-        <h1>Moyenne de produits par fabricants</h1>
-        <p>{{ moyenneProduit }}</p>
-      </div>
-    </div>
-
     <div v-if="props.mag">
-      <h3>Top 10 magasins</h3>
-
-      <div class="box-container">
-        <ApexChart
-          v-if="optionsFab && props.mag"
-          width="500"
-          type="bar"
-          :options="optionsFab"
-          :series="optionsFab.series"
-        ></ApexChart>
-
-        <ApexChart
-          v-if="optionsProd && props.mag"
-          type="bar"
-          width="500"
-          :options="optionsProd"
-          :series="optionsProd.series"
-        ></ApexChart>
+      <div class="tabs">
+        <div
+          :class="[currentTab === item && 'is-active']"
+          @click="currentTab = item"
+          class="tab"
+          v-for="item in optionTabs"
+          :key="item"
+        >
+          {{ item }}
+        </div>
       </div>
 
-      <h3>Moyenne de produits by fabricants dans top 10 magasins</h3>
-      <!-- pour calculer la moyenne de produits -->
-      <p>
-        Entrer la fabricants:
-        <input class="fab-input" type="number" v-model="checkFabID" />
-        <button class="fab-btn" @click="handleCount">Compter</button>
-      </p>
-      <div v-if="loadingChart">Loading chart ...</div>
-      <div v-else>
-        <div class="box-container">
-          <ApexChart
-            v-if="optionsMoyProd1 && props.mag"
-            :type="optionsMoyProd1.chart.type"
-            :height="optionsMoyProd1.chart.height"
-            :options="optionsMoyProd1"
-            :series="optionsMoyProd1.series"
-          ></ApexChart>
+      <div v-if="currentTab === optionTabs[0]">
+        <h3>Nombre total</h3>
+        <div v-if="isLoading">Loading container...</div>
+        <div v-else class="box-container">
+          <div class="small-box">
+            <h1>Nombre de fabricants</h1>
+            <p>{{ nombreFab }}</p>
+          </div>
 
-          <ApexChart
-            v-if="optionsMoyProd2 && props.mag"
-            :type="optionsMoyProd2.chart.type"
-            :height="optionsMoyProd2.chart.height"
-            :options="optionsMoyProd2"
-            :series="optionsMoyProd2.series"
-          ></ApexChart>
+          <div class="small-box">
+            <h1>Nombre de produits</h1>
+            <p>{{ nombreProd }}</p>
+          </div>
+
+          <div v-if="nombreMag !== 0" class="small-box">
+            <h1>Nombre de magasins</h1>
+            <p>{{ nombreMag }}</p>
+          </div>
         </div>
 
-        <div class="box-container">
-          <ApexChart
-            v-if="optionsTopFab"
-            type="bar"
-            width="500"
-            :options="optionsTopFab"
-            :series="optionsTopFab.series"
-          ></ApexChart>
+        <h3>Moyenne</h3>
+        <div v-if="isLoading">Loading container...</div>
+        <div v-else class="box-container">
+          <div class="small-box">
+            <h1>Moyenne de produits par fabricants</h1>
+            <p>{{ moyenneProduit }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-else-if="currentTab === optionTabs[1]">
+        <div v-if="props.mag">
+          <h3>Top 10 magasins</h3>
+
+          <div class="box-container">
+            <ApexChart
+              v-if="optionsFab && props.mag"
+              width="500"
+              type="bar"
+              :options="optionsFab"
+              :series="optionsFab.series"
+            ></ApexChart>
+
+            <ApexChart
+              v-if="optionsProd && props.mag"
+              type="bar"
+              width="500"
+              :options="optionsProd"
+              :series="optionsProd.series"
+            ></ApexChart>
+          </div>
+        </div>
+      </div>
+
+      <div v-else>
+        <div v-if="props.mag">
+          <h3>Moyenne de produits by fabricants dans top 10 magasins</h3>
+          <!-- pour calculer la moyenne de produits -->
+          <p>
+            Entrer la fabricants:
+            <input
+              class="fab-input"
+              type="number"
+              v-model="checkFabID"
+              @keyup.enter="handleCount"
+            />
+            <button class="fab-btn" @click="handleCount">Compter</button>
+          </p>
+          <div v-if="loadingChart">Loading chart ...</div>
+          <div v-else>
+            <div class="box-container">
+              <ApexChart
+                v-if="optionsTopFab"
+                type="bar"
+                width="500"
+                :options="optionsTopFab"
+                :series="optionsTopFab.series"
+              ></ApexChart>
+              <div class="box-container">
+                <ApexChart
+                  v-if="optionsMoyProd1 && props.mag"
+                  :type="optionsMoyProd1.chart.type"
+                  :height="optionsMoyProd1.chart.height"
+                  :options="optionsMoyProd1"
+                  :series="optionsMoyProd1.series"
+                ></ApexChart>
+
+                <ApexChart
+                  v-if="optionsMoyProd2 && props.mag"
+                  :type="optionsMoyProd2.chart.type"
+                  :height="optionsMoyProd2.chart.height"
+                  :options="optionsMoyProd2"
+                  :series="optionsMoyProd2.series"
+                ></ApexChart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <h3>Nombre total</h3>
+      <div v-if="isLoading">Loading container...</div>
+      <div v-else class="box-container">
+        <div class="small-box">
+          <h1>Nombre de fabricants</h1>
+          <p>{{ nombreFab }}</p>
+        </div>
+
+        <div class="small-box">
+          <h1>Nombre de produits</h1>
+          <p>{{ nombreProd }}</p>
+        </div>
+
+        <div v-if="nombreMag !== 0" class="small-box">
+          <h1>Nombre de magasins</h1>
+          <p>{{ nombreMag }}</p>
+        </div>
+      </div>
+
+      <h3>Moyenne</h3>
+      <div v-if="isLoading">Loading container...</div>
+      <div v-else class="box-container">
+        <div class="small-box">
+          <h1>Moyenne de produits par fabricants</h1>
+          <p>{{ moyenneProduit }}</p>
         </div>
       </div>
     </div>
@@ -480,6 +509,35 @@
 </template>
 
 <style lang="scss" scoped>
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    .tab {
+      background-color: #282626;
+      color: white;
+      padding: 10px 15px;
+      border: solid 1px black;
+      cursor: pointer;
+    }
+
+    .tab:hover,
+    .is-active {
+      background-color: rgba(0, 143, 251, 0.85);
+      // color: black;
+    }
+
+    .tab:first-child {
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+    }
+
+    .tab:nth-child(3) {
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+  }
   .fab-input {
     height: 20px;
     font-size: 1rem;
@@ -527,6 +585,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0 auto;
 
     .small-box {
       border: solid 2px black;
