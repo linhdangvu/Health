@@ -13,6 +13,7 @@
   } from "vue";
   import ApexChart from "vue3-apexcharts";
   import { useFile } from "../stores/useFile";
+import { toApexChart, toApexChart2 } from "../utils/apexchart";
   import sleep from "../utils/sleep";
 
   /* PROPS */
@@ -180,18 +181,7 @@
     }
   });
 
-  const toApexChart2 = (data1: any[], data2: any[]) => {
-    return data1.map((item: any, index: number) => {
-      return { x: item, y: data2[index] };
-    });
-  };
 
-  const toApexChart = (data: any[]) => {
-    return data.map((item: any) => {
-      const key: any = Object.keys(item).pop();
-      return { x: key, y: item[key] };
-    });
-  };
 
   const optionsQ21 = computed(() => {
     if (!isLoading.value) {
