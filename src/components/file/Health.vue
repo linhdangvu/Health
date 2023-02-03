@@ -41,6 +41,7 @@
   let topMagasin: any = {};
   const dateData: any[] = [];
   const chartTopFab = reactive<any[]>([]);
+  const chartTopProd = reactive<any[]>([]);
   const checkFabID = ref(965);
   const oldCategory = ref(props.catID);
   const dateString = [
@@ -111,7 +112,7 @@
 
       dateData.sort((a: any, b: any) => a - b);
     });
-    console.log(dateData);
+    // console.log(dateData);
     // Question 1.1
     nombreFab.value = fabData.length;
     nombreProd.value = prodData.length;
@@ -152,8 +153,8 @@
 
       topMagasinByFab = fabSorted.slice(0, 10);
       topMagasinByProd = prodSorted.slice(0, 10);
-      console.log(topMagasinByFab);
-      console.log(topMagasin);
+      // console.log(topMagasinByFab);
+      // console.log(topMagasin);
       // Question 1.4
       // Pose fabID = 506, catID = 5, magasin top 10
 
@@ -167,7 +168,7 @@
     topMagasinByFab: any[],
     topMagasinByProd: any[]
   ) => {
-    console.log("Start Fab", topMagasinByFab, topMagasinByProd);
+    console.log("Start Fab");
     // Question 1.4
     // Pose fabID = 506, catID = 5, magasin top 10
     const list10MagFab = topMagasinByFab.map((ele: any) => {
@@ -177,10 +178,11 @@
       return Object.keys(ele).pop();
     });
 
+    console.log(list10MagFab, list10MagProd);
     const filteredProductByFabTop: any[] = [];
     const filteredProductByProdTop: any[] = [];
     const chartFab: any[] = [];
-    console.log(props.data.length);
+    const chartProd: any[] = [];
     props.data.forEach((item: any) => {
       if (
         Number(item.catID) === Number(category) &&
@@ -191,9 +193,8 @@
           list10MagFab.includes(item.magID)
         ) {
           filteredProductByFabTop.push(item.prodID);
-          console.log("FAB", item);
+          // console.log("FAB", item);
 
-          // Janvier
           dateData.forEach((i2: any, index: number) => {
             if (!chartFab[index]) chartFab[index] = 0;
             if (Number(item.dateID.slice(0, 6)) === Number(i2)) {
@@ -213,15 +214,29 @@
         ) {
           filteredProductByProdTop.push(item.prodID);
           // console.log("PROD", item);
+
+          dateData.forEach((i2: any, index: number) => {
+            if (!chartProd[index]) chartProd[index] = 0;
+            if (Number(item.dateID.slice(0, 6)) === Number(i2)) {
+              if (chartProd[index] !== 0) {
+                const n = chartProd[index];
+                chartProd[index] = (n + 1 / 10) * 100;
+              } else {
+                chartProd[index] = (1 / 10) * 100;
+              }
+            }
+          });
         }
         // if (Number(item.catID) === props.catID && Number(item.magID) === 22) {
         //   console.log(item.fabID);
         // }
       }
     });
-    console.log(chartFab);
     clearArray(chartTopFab);
     addArray(chartTopFab, chartFab);
+
+    clearArray(chartTopProd);
+    addArray(chartTopProd, chartProd);
     // console.log(filteredProductByFabTop, filteredProductByProdTop);
     moyenneProdTop1.value = (filteredProductByFabTop.length / 10) * 100;
     moyenneProdTop2.value = (filteredProductByProdTop.length / 10) * 100;
@@ -256,7 +271,7 @@
           type: "bar",
         },
         title: {
-          text: "Top Magasin a la plupart des fabricants avec lesquels coopérer",
+          text: "Top Magasin a la plus des fabricants avec lesquels coopérer",
           align: "center",
         },
         series: [
@@ -277,7 +292,7 @@
           type: "bar",
         },
         title: {
-          text: "Top Magasin a la plupart des produits à vendre",
+          text: "Top Magasin a la plus des produits à vendre",
           align: "center",
         },
         series: [
@@ -326,7 +341,7 @@
           type: "bar",
         },
         title: {
-          text: "Moyenne de produits par mois",
+          text: "Dans la top 10 magasins qui a le plus fabricants",
           align: "center",
         },
         series: [
@@ -340,8 +355,28 @@
     return undefined;
   });
 
+  const optionsTopProd = computed(() => {
+    if (!isLoading.value) {
+      return {
+        chart: {
+          type: "bar",
+        },
+        title: {
+          text: "Dans la top 10 magasins qui a le plus produits",
+          align: "center",
+        },
+        series: [
+          {
+            name: "Moyenne de produits",
+            data: toApexChart2(dateString, chartTopProd),
+          },
+        ],
+      };
+    }
+    return undefined;
+  });
+
   watchEffect(async () => {
-    console.log("Watch", checkFabID);
     if (Number(oldCategory.value !== Number(props.catID))) {
       console.log("Restart by category");
       oldCategory.value = Number(props.catID);
@@ -351,10 +386,6 @@
       await sleep(1);
       isLoading.value = false;
       console.log("End restart by category");
-    }
-
-    if (!isLoading.value) {
-      console.log(toApexChart2(dateData, chartTopFab));
     }
   });
 </script>
@@ -453,23 +484,30 @@
                 :options="optionsTopFab"
                 :series="optionsTopFab.series"
               ></ApexChart>
-              <div class="box-container">
-                <ApexChart
-                  v-if="optionsMoyProd1 && props.mag"
-                  :type="optionsMoyProd1.chart.type"
-                  :height="optionsMoyProd1.chart.height"
-                  :options="optionsMoyProd1"
-                  :series="optionsMoyProd1.series"
-                ></ApexChart>
+              <ApexChart
+                v-if="optionsMoyProd1 && props.mag"
+                :type="optionsMoyProd1.chart.type"
+                :height="optionsMoyProd1.chart.height"
+                :options="optionsMoyProd1"
+                :series="optionsMoyProd1.series"
+              ></ApexChart>
+            </div>
 
-                <ApexChart
-                  v-if="optionsMoyProd2 && props.mag"
-                  :type="optionsMoyProd2.chart.type"
-                  :height="optionsMoyProd2.chart.height"
-                  :options="optionsMoyProd2"
-                  :series="optionsMoyProd2.series"
-                ></ApexChart>
-              </div>
+            <div class="box-container">
+              <ApexChart
+                v-if="optionsTopProd"
+                type="bar"
+                width="500"
+                :options="optionsTopProd"
+                :series="optionsTopProd.series"
+              ></ApexChart>
+              <ApexChart
+                v-if="optionsMoyProd2 && props.mag"
+                :type="optionsMoyProd2.chart.type"
+                :height="optionsMoyProd2.chart.height"
+                :options="optionsMoyProd2"
+                :series="optionsMoyProd2.series"
+              ></ApexChart>
             </div>
           </div>
         </div>

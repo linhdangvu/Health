@@ -65,7 +65,7 @@
 
   onUpdated(async () => {
     if (oldFile.value !== dataToShow.value) {
-      console.log(oldFile.value, dataToShow.value);
+      // console.log(oldFile.value, dataToShow.value);
 
       oldFile.value = dataToShow.value;
 

@@ -215,7 +215,7 @@
           type: "bar",
         },
         title: {
-          text: "Top Magasin a la plupart des fabricants avec lesquels coopérer",
+          text: "Top Magasin a la plus des fabricants avec lesquels coopérer",
           align: "center",
         },
         series: [
@@ -236,7 +236,7 @@
           type: "bar",
         },
         title: {
-          text: "Top Magasin a la plupart des produits à vendre",
+          text: "Top Magasin a la plus des produits à vendre",
           align: "center",
         },
         series: [
@@ -267,11 +267,11 @@
   });
 
   watchEffect(async () => {
-    console.log("Watch", Number(oldCategory.value) !== Number(props.catID));
-    console.log(optionsFab.value);
+    // console.log("Watch", Number(oldCategory.value) !== Number(props.catID));
+    // console.log(optionsFab.value);
     if (Number(oldCategory.value) !== Number(props.catID)) {
       console.log("Restart by category Date");
-      console.log("watch", oldCategory.value, Number(props.catID));
+      // console.log("watch", oldCategory.value, Number(props.catID));
       oldCategory.value = Number(props.catID);
       isLoading.value = true;
       await sleep(1);
@@ -279,8 +279,6 @@
       await sleep(1);
       isLoading.value = false;
       console.log("End restart by category Date");
-    } else {
-      console.log("Not in the same value");
     }
   });
 </script>
