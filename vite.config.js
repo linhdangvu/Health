@@ -6,9 +6,33 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      "/produits": {
+        target: "http://51.255.166.155:1353/logAccordsVente/1664/?format=json",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/health/, ""),
+      },
+      "/vente": {
+        target: "http://51.255.166.155:1353/logAccordsVente/1664/?format=json",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/health/, ""),
+      },
+    },
+  },
   plugins: [
     vue(),
-    Pages(),
+    Pages({
+      nuxtStyle: false,
+      pagesDir: [
+        {
+          dir: "src/pages",
+          baseRoute: "",
+        },
+      ],
+    }),
     Components({
       /* options */
       dirs: ["src/components"],

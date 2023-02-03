@@ -10,10 +10,10 @@
     watchEffect,
   } from "vue";
   import ApexChart from "vue3-apexcharts";
-  import { useFile } from "../stores/useFile";
-  import { toApexChart, toApexChart2 } from "../utils/apexchart";
-  import sleep from "../utils/sleep";
-  import { addArray, clearArray } from "../utils/useArray";
+  import { useFile } from "../../stores/useFile";
+  import { toApexChart, toApexChart2 } from "../../utils/apexchart";
+  import sleep from "../../utils/sleep";
+  import { addArray, clearArray } from "../../utils/useArray";
 
   /* PROPS */
   const props = defineProps<{

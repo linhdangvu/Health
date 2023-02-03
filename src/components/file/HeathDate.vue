@@ -12,9 +12,9 @@
     watchEffect,
   } from "vue";
   import ApexChart from "vue3-apexcharts";
-  import { useFile } from "../stores/useFile";
-  import { toApexChart, toApexChart2 } from "../utils/apexchart";
-  import sleep from "../utils/sleep";
+  import { useFile } from "../../stores/useFile";
+  import { toApexChart, toApexChart2 } from "../../utils/apexchart";
+  import sleep from "../../utils/sleep";
 
   /* INITIAL CONSTANT */
   // SOLDES 2022: 12/1/2022 au 8/2/2022 => 20220112 -> 20220208
@@ -312,7 +312,17 @@
         <div class="box-container">
           <div class="moyenne-box" v-if="Number(props.annee) === 2022">
             <div>
-              <h3>Moyenne dans les soldes d'hiver {{ props.annee }}</h3>
+              <h3>
+                Moyenne dans les
+                <span class="tooltip">
+                  soldes d'hiver
+                  <span class="tooltiptext" v-if="Number(props.annee) === 2022">
+                    <p>Soldes d'Hiver 2022: de 12/1/2022 au 8/2/2022</p>
+                    <p>L'Été: de 21/6/2022 au 23/9/2022</p>
+                  </span>
+                </span>
+                {{ props.annee }}
+              </h3>
               <div v-if="isLoading">Loading...</div>
               <div v-else class="box-container">
                 <div class="small-box">
@@ -342,7 +352,15 @@
       <div v-else>
         <div v-if="Number(props.annee) === 2022">
           <h3>
-            Top 10 magasins dans l'été et les soldes d'hiver en
+            Top 10 magasins dans
+            <span class="tooltip">
+              l'été et les soldes d'hiver
+              <span class="tooltiptext" v-if="Number(props.annee) === 2022">
+                <p>Soldes d'Hiver 2022: de 12/1/2022 au 8/2/2022</p>
+                <p>L'Été: de 21/6/2022 au 23/9/2022</p>
+              </span>
+            </span>
+            en
             {{ props.annee }}
           </h3>
 
@@ -375,7 +393,17 @@
       <div class="box-container">
         <div class="moyenne-box" v-if="Number(props.annee) === 2022">
           <div>
-            <h3>Moyenne dans les soldes d'hiver {{ props.annee }}</h3>
+            <h3>
+              Moyenne dans les
+              <span class="tooltip">
+                soldes d'hiver
+                <span class="tooltiptext" v-if="Number(props.annee) === 2022">
+                  <p>Soldes d'Hiver 2022: de 12/1/2022 au 8/2/2022</p>
+                  <p>L'Été: de 21/6/2022 au 23/9/2022</p>
+                </span>
+              </span>
+              {{ props.annee }}
+            </h3>
             <div v-if="isLoading">Loading...</div>
             <div v-else class="box-container">
               <div class="small-box">
@@ -495,5 +523,48 @@
     position: absolute;
     top: 50%;
     left: 50%;
+  }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    // border-bottom: 1px dotted black;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: max-content;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
   }
 </style>

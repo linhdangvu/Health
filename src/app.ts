@@ -38,10 +38,10 @@ async function createApp() {
   return test;
 }
 
-createApp().then(async (First) => {
+createApp().then(async (Health) => {
   // wait for the app to be ready
-  await First.router.isReady();
+  await Health.router.isReady();
 
   // finaly mount the app to the DOM
-  First.app.mount("#app");
+  Health.app.mount("#app");
 });

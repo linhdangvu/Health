@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",
+    "@vueuse/head": "^1.0.24",
     "apexcharts": "^3.36.3",
     "axios": "^1.3.0",
     "bootstrap": "^5.2.3",
     "fs": "^0.0.1-security",
+    "generate-page": "^1.0.3",
     "readline": "^1.3.0",
     "unplugin-vue-components": "^0.23.0",
     "vite-plugin-pages": "^0.28.0",
