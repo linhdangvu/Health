@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, onMounted, onUpdated, ref, watchEffect } from "vue";
   import { useFile } from "../../stores/useFile";
+  import sleep from "../../../src/utils/sleep";
 
   /* INITIAL VARIABLE */
   const question = ref("q2");
@@ -70,7 +71,9 @@
       oldFile.value = dataToShow.value;
 
       isLoading.value = true;
+      await sleep(1);
       await handleFile();
+      await sleep(1);
       isLoading.value = false;
     }
   });
@@ -117,7 +120,7 @@
       </div>
     </div>
 
-    <div v-if="allData.length !== 0">
+    <div v-if="allData.length !== 0 && !isLoading">
       <Health
         v-if="annee === `Tous les années`"
         :catID="category"

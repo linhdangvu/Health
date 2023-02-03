@@ -252,11 +252,13 @@
     loadingChart.value = false;
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     isLoading.value = true;
     console.log("Loading...");
     try {
+      await sleep(1);
       handleData(Number(props.catID));
+      await sleep(1);
       isLoading.value = false;
       console.log("End loading...");
     } catch (e: any) {

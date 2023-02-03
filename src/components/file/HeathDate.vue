@@ -175,11 +175,13 @@
     }
   };
 
-  onMounted(() => {
-    isLoading.value = true;
+  onMounted(async () => {
     console.log("Loading...");
+    isLoading.value = true;
     try {
+      await sleep(1);
       handleData(Number(props.catID), props.annee);
+      await sleep(1);
       console.log("End loading...");
       isLoading.value = false;
     } catch (e) {
@@ -251,7 +253,8 @@
   });
 
   onUnmounted(() => {
-    console.log("Unmmounted");
+    isLoading.value = true;
+    console.log("Unmmounted", isLoading.value);
   });
 
   onUpdated(async () => {
