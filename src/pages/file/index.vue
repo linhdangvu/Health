@@ -4,15 +4,14 @@
   import sleep from "../../../src/utils/sleep";
 
   /* INITIAL VARIABLE */
-  const question = ref("q2");
   const category = ref(5);
   const annee = ref("Tous les années");
   const dataToShow = ref(
     "/Volumes/Bi DANG/CFAINSTA/Codespace/IA/health/src/data/pointsDeVente-tous"
   );
   const oldFile = ref(dataToShow.value);
-  const oldCategory = ref(category.value);
-  const oldAnnee = ref(annee.value);
+  // const oldCategory = ref(category.value);
+  // const oldAnnee = ref(annee.value);
 
   const isLoading = ref(true);
   const file = useFile();
@@ -50,11 +49,6 @@
     } catch (e: any) {
       console.log(e);
     }
-  };
-
-  const changeDataShow = async (val: string) => {
-    // console.log(val);
-    dataToShow.value = val;
   };
 
   const allData = computed(() => {

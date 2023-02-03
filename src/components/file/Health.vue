@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { anyTypeAnnotation } from "@babel/types";
-  import axios from "axios";
+  // import axios from "axios";
   import {
     computed,
     onMounted,
@@ -10,7 +9,7 @@
     watchEffect,
   } from "vue";
   import ApexChart from "vue3-apexcharts";
-  import { useFile } from "../../stores/useFile";
+  // import { useFile } from "../../stores/useFile";
   import { toApexChart, toApexChart2 } from "../../utils/apexchart";
   import sleep from "../../utils/sleep";
   import { addArray, clearArray } from "../../utils/useArray";
@@ -27,7 +26,6 @@
   const nombreProd = ref(0);
   const nombreMag = ref(0);
   const isLoading = ref(true);
-  const isLoadingMoyen = ref(true);
   const moyenneProduit = ref(0);
   const moyenneProdTop1 = ref(0);
   const moyenneProdTop2 = ref(0);

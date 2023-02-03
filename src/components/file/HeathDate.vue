@@ -1,18 +1,15 @@
 <script setup lang="ts">
-  import { anyTypeAnnotation } from "@babel/types";
-  import axios from "axios";
-  import { AnyNsRecord } from "dns";
+  // import axios from "axios";
   import {
     computed,
     onMounted,
     onUnmounted,
     onUpdated,
-    reactive,
     ref,
     watchEffect,
   } from "vue";
   import ApexChart from "vue3-apexcharts";
-  import { useFile } from "../../stores/useFile";
+  // import { useFile } from "../../stores/useFile";
   import { toApexChart, toApexChart2 } from "../../utils/apexchart";
   import sleep from "../../utils/sleep";
 
